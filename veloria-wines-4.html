@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veloria Wines — Crafted for Taste. Designed for Experience.</title>
+<meta name="description" content="Discover the finest wines curated for true connoisseurs.">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Didact+Gothic&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- GSAP (free plugins only) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<!-- Lenis smooth scroll -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+
+<!-- Flatpickr date picker -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<style>
+:root {
+  --bg:#0a0806;--bg2:#110d0a;--bg3:#1a1210;
+  --gold:#c9a84c;--gold2:#e8c97a;--goldf:rgba(201,168,76,.14);
+  --wine:#7a2535;--wine2:#4a1420;--wine3:#a83048;
+  --cream:#f0e8d8;--txt:#e8ddd0;--txt2:rgba(232,221,208,.55);--txt3:rgba(232,221,208,.28);
+  --bdr:rgba(201,168,76,.18);--glass:rgba(255,255,255,.04);--glass2:rgba(255,255,255,.07);
+  --fd:'Cinzel',serif;--fs:'Cormorant Garamond',serif;--fu:'Didact Gothic',sans-serif;
+  --ease:cubic-bezier(.25,.46,.45,.94);
+}
+[data-theme="light"]{
+  --bg:#f5f0e8;--bg2:#ede6d8;--bg3:#e5dcc8;
+  --txt:#1a120a;--txt2:rgba(26,18,10,.6);--txt3:rgba(26,18,10,.28);
+  --bdr:rgba(201,168,76,.25);--glass:rgba(0,0,0,.03);--glass2:rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:auto}
+body{background:var(--bg);color:var(--txt);font-family:var(--fu);overflow-x:hidden;cursor:none;-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
+::selection{background:var(--gold);color:#000}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+button{border:none;background:none;cursor:none;font-family:inherit}
+input,textarea,select{font-family:inherit;color:var(--txt)}
+
+/* CURSOR */
+#cur-dot{position:fixed;top:0;left:0;z-index:99999;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:opacity .2s}
+#cur-ring{position:fixed;top:0;left:0;z-index:99998;width:36px;height:36px;border:1.5px solid rgba(201,168,76,.6);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);transition:width .3s,height .3s,border-color .3s,background .3s}
+.hov #cur-ring{width:58px;height:58px;border-color:var(--gold);background:rgba(201,168,76,.06)}
+.hov #cur-dot{opacity:.35}
+
+/* PROGRESS */
+#prog{position:fixed;top:0;left:0;z-index:99997;height:2px;width:0;background:var(--gold);pointer-events:none;z-index:9999}
+
+/* NAVBAR */
+#nav{position:fixed;top:0;left:0;right:0;z-index:9000;padding:26px 60px;display:flex;align-items:center;justify-content:space-between;transition:padding .4s,background .4s}
+#nav.scrolled{padding:13px 60px;background:rgba(10,8,6,.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--bdr)}
+.nav-logo{font-family:var(--fd);font-size:1.35rem;letter-spacing:.35em;color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:36px;list-style:none}
+.nav-links a{font-family:var(--fu);font-size:.71rem;letter-spacing:.2em;text-transform:uppercase;color:var(--txt2);position:relative;transition:color .3s}
+.nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:1px;background:var(--gold);transition:width .35s}
+.nav-links a:hover{color:var(--gold)}
+.nav-links a:hover::after{width:100%}
+.nav-right{display:flex;align-items:center;gap:12px}
+.btn-icon{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid var(--bdr);color:var(--txt2);transition:all .3s;font-size:.92rem;position:relative;flex-shrink:0}
+.btn-icon:hover{border-color:var(--gold);color:var(--gold)}
+.btn-nav{font-family:var(--fd);font-size:.67rem;letter-spacing:.2em;text-transform:uppercase;padding:10px 22px;border:1px solid var(--gold);color:var(--gold);transition:all .3s}
+.btn-nav:hover{background:var(--gold);color:#000}
+#cart-count{position:absolute;top:-7px;right:-7px;width:17px;height:17px;background:var(--gold);color:#000;border-radius:50%;font-size:.58rem;font-weight:700;display:none;align-items:center;justify-content:center}
+.ham{display:none;flex-direction:column;gap:5px;width:26px;padding:4px}
+.ham span{display:block;height:1px;background:var(--txt);transition:all .3s}
+
+/* MOBILE MENU */
+#mob-menu{position:fixed;inset:0;z-index:8999;background:rgba(10,8,6,.97);backdrop-filter:blur(28px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s}
+#mob-menu.open{opacity:1;pointer-events:all}
+.mob-links{list-style:none;text-align:center}
+.mob-links li{margin-bottom:26px}
+.mob-links a{font-family:var(--fd);font-size:1.9rem;letter-spacing:.1em;color:var(--txt2);transition:color .3s}
+.mob-links a:hover{color:var(--gold)}
+
+/* HERO */
+#hero{position:relative;height:100vh;min-height:680px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:#0a0806}
+.hero-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 75% at 28% 62%,rgba(122,37,53,.38) 0%,transparent 58%),radial-gradient(ellipse 45% 65% at 72% 36%,rgba(74,20,32,.45) 0%,transparent 55%);animation:atmos 9s ease-in-out infinite alternate}
+.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 0%,transparent 38%)}
+@keyframes atmos{0%{opacity:.7;transform:scale(1)}100%{opacity:1;transform:scale(1.05)}}
+.hero-btl{position:absolute;right:9%;top:50%;transform:translateY(-50%);opacity:.1;width:190px;animation:float 6s ease-in-out infinite;z-index:1}
+@keyframes float{0%,100%{transform:translateY(-52%)}50%{transform:translateY(-48%)}}
+.hero-content{position:relative;z-index:2;max-width:840px;padding:0 28px}
+.hero-ey{font-family:var(--fu);font-size:.69rem;letter-spacing:.44em;text-transform:uppercase;color:var(--gold);margin-bottom:24px;display:block}
+.hero-h1{font-family:var(--fd);font-size:clamp(2.5rem,6vw,5rem);line-height:1.1;letter-spacing:.04em;color:var(--cream);margin-bottom:20px;font-weight:500}
+.hero-h1 em{color:var(--gold);font-style:italic;font-family:var(--fs)}
+.hero-sub{font-family:var(--fs);font-size:clamp(.98rem,2vw,1.18rem);color:var(--txt2);font-weight:300;letter-spacing:.06em;margin-bottom:42px;line-height:1.9}
+.btn-hero{display:inline-flex;align-items:center;gap:12px;font-family:var(--fd);font-size:.74rem;letter-spacing:.28em;text-transform:uppercase;padding:17px 42px;background:var(--gold);color:#000;font-weight:600;position:relative;overflow:hidden;transition:box-shadow .4s}
+.btn-hero::before{content:'';position:absolute;inset:0;background:var(--gold2);transform:translateX(-100%);transition:transform .4s}
+.btn-hero:hover::before{transform:translateX(0)}
+.btn-hero span,.btn-hero svg{position:relative;z-index:1;transition:transform .3s}
+.btn-hero:hover svg{transform:translateX(5px)}
+.scroll-hint{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:9px}
+.scroll-line{width:1px;height:54px;background:linear-gradient(to bottom,var(--gold),transparent);animation:sline 2.2s ease-in-out infinite}
+@keyframes sline{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.scroll-txt{font-family:var(--fu);font-size:.59rem;letter-spacing:.28em;text-transform:uppercase;color:var(--txt3)}
+
+/* MARQUEE */
+.mq-wrap{overflow:hidden;border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);padding:17px 0;background:var(--bg2)}
+.mq-track{display:flex;gap:48px;white-space:nowrap;animation:mq 28s linear infinite}
+.mq-track span{font-family:var(--fd);font-size:.67rem;letter-spacing:.28em;text-transform:uppercase;color:var(--txt3)}
+.mq-track .dot{color:var(--gold)}
+@keyframes mq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* SECTION COMMONS */
+.pad{padding:108px 60px}
+.ey{font-family:var(--fu);font-size:.67rem;letter-spacing:.44em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:block}
+.stitle{font-family:var(--fd);font-size:clamp(1.85rem,4vw,2.9rem);letter-spacing:.06em;color:var(--txt);line-height:1.15;margin-bottom:16px}
+.ssub{font-family:var(--fs);font-size:1.08rem;font-weight:300;line-height:1.9;color:var(--txt2);max-width:530px}
+.gline{width:54px;height:1px;background:linear-gradient(to right,var(--gold),transparent);margin:20px 0}
+
+/* WINES */
+#wines{background:var(--bg)}
+.wines-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:58px;flex-wrap:wrap;gap:22px}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap}
+.fbtn{font-family:var(--fu);font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;padding:8px 16px;color:var(--txt2);border:1px solid transparent;transition:all .3s}
+.fbtn.on,.fbtn:hover{border-color:var(--gold);color:var(--gold)}
+.wines-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:3px}
+.wine-card{background:var(--bg3);overflow:hidden}
+.wc-img{height:390px;background:var(--bg2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.wc-img svg{transition:transform .6s var(--ease);filter:drop-shadow(0 18px 36px rgba(0,0,0,.5))}
+.wine-card:hover .wc-img svg{transform:scale(1.1) translateY(-8px)}
+.wc-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,8,6,.96) 0%,rgba(10,8,6,.22) 55%,transparent 100%);opacity:0;transition:opacity .4s;display:flex;align-items:flex-end;padding:22px}
+.wine-card:hover .wc-ov{opacity:1}
+.wc-acts{display:flex;gap:8px;width:100%;transform:translateY(16px);transition:transform .4s}
+.wine-card:hover .wc-acts{transform:translateY(0)}
+.btn-wc{flex:1;padding:11px 6px;text-align:center;font-family:var(--fu);font-size:.61rem;letter-spacing:.17em;text-transform:uppercase;transition:all .3s}
+.btn-wc-p{background:var(--gold);color:#000}
+.btn-wc-p:hover{background:var(--gold2)}
+.btn-wc-o{border:1px solid rgba(255,255,255,.28);color:var(--txt)}
+.btn-wc-o:hover{border-color:var(--gold);color:var(--gold)}
+.wc-info{padding:20px;border-top:1px solid var(--bdr)}
+.wc-stars{display:flex;gap:2px;margin-bottom:6px}
+.star{color:var(--gold);font-size:.68rem}
+.star.dim{color:var(--txt3)}
+.wc-name{font-family:var(--fd);font-size:.93rem;letter-spacing:.11em;color:var(--txt);margin-bottom:4px}
+.wc-meta{font-family:var(--fu);font-size:.64rem;letter-spacing:.11em;color:var(--txt2);margin-bottom:11px}
+.wc-price{font-family:var(--fs);font-size:1.25rem;color:var(--gold);font-weight:500}
+
+/* STORY */
+#story{background:var(--bg2)}
+.story-grid{display:grid;grid-template-columns:1fr 1fr;min-height:660px}
+.story-vis{position:relative;background:var(--wine2);overflow:hidden}
+.s-vis-grad{position:absolute;inset:0;background:radial-gradient(ellipse at 32% 60%,rgba(122,37,53,.58),rgba(74,20,32,.88))}
+.vis-foot{position:absolute;bottom:50px;left:42px;right:42px;z-index:2}
+.big-yr{font-family:var(--fd);font-size:6.5rem;color:rgba(201,168,76,.08);line-height:1;position:absolute;bottom:-14px;left:-8px;pointer-events:none;letter-spacing:.04em}
+.vis-reg{font-family:var(--fs);font-size:1.3rem;font-style:italic;font-weight:300;color:var(--cream);margin-bottom:7px}
+.vis-sub2{font-family:var(--fu);font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--gold)}
+.story-body{padding:88px 65px;display:flex;flex-direction:column;justify-content:center}
+.story-q{font-family:var(--fs);font-size:1.55rem;font-weight:300;font-style:italic;line-height:1.65;color:var(--txt);margin-bottom:30px;position:relative;padding-left:18px}
+.story-q::before{content:'\201C';position:absolute;left:-5px;top:-22px;font-size:4.2rem;color:var(--gold);opacity:.28;line-height:1;font-family:var(--fs)}
+.story-body p{font-family:var(--fs);font-size:1rem;font-weight:300;line-height:2;color:var(--txt2);margin-bottom:14px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:42px;padding-top:34px;border-top:1px solid var(--bdr)}
+.stat-n{font-family:var(--fd);font-size:2rem;color:var(--gold);letter-spacing:.04em;display:block;margin-bottom:5px}
+.stat-l{font-family:var(--fu);font-size:.63rem;letter-spacing:.16em;text-transform:uppercase;color:var(--txt2)}
+
+/* BOOKING */
+#booking{background:var(--bg);position:relative;overflow:hidden}
+#booking::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 55% at 82% 50%,rgba(122,37,53,.05) 0%,transparent 60%);pointer-events:none}
+.bk-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:68px;align-items:start}
+.exp-card{padding:24px;border:1px solid var(--bdr);background:var(--glass);margin-bottom:13px;transition:all .35s;position:relative;overflow:hidden}
+.exp-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold);transform:scaleY(0);transform-origin:bottom;transition:transform .3s}
+.exp-card:hover::before{transform:scaleY(1)}
+.exp-card:hover{background:var(--glass2)}
+.exp-t{font-family:var(--fd);font-size:.9rem;letter-spacing:.1em;color:var(--txt);margin-bottom:5px}
+.exp-d{font-family:var(--fs);font-size:.88rem;color:var(--txt2);line-height:1.7;margin-bottom:9px}
+.exp-p{font-family:var(--fs);font-size:1.12rem;color:var(--gold)}
+.bk-form{background:var(--glass2);backdrop-filter:blur(20px);border:1px solid var(--bdr);padding:42px;position:relative}
+.bk-form::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--gold),transparent)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-family:var(--fu);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.fg input,.fg select,.fg textarea{width:100%;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid var(--bdr);color:var(--txt);font-size:.88rem;outline:none;transition:border-color .3s;-webkit-appearance:none;appearance:none}
+.fg select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c9a84c'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold)}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--txt3)}
+.fg textarea{height:86px;resize:none}
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tslot{padding:10px 5px;text-align:center;border:1px solid var(--bdr);font-family:var(--fu);font-size:.68rem;letter-spacing:.06em;color:var(--txt2);transition:all .3s}
+.tslot:hover,.tslot.on{border-color:var(--gold);color:var(--gold);background:var(--goldf)}
+.btn-book{width:100%;padding:16px;background:var(--wine);color:var(--cream);font-family:var(--fd);font-size:.73rem;letter-spacing:.26em;text-transform:uppercase;transition:all .4s;position:relative;overflow:hidden;margin-top:7px}
+.btn-book::before{content:'';position:absolute;inset:0;background:var(--wine3);transform:translateX(-100%);transition:transform .4s}
+.btn-book:hover::before{transform:translateX(0)}
+.btn-book span{position:relative;z-index:1}
+.sbox{display:none;text-align:center;padding:28px 0}
+.sbox.show{display:block}
+.sbox-ico{width:54px;height:54px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.3rem;color:var(--gold)}
+
+/* Flatpickr overrides */
+.flatpickr-calendar{background:var(--bg3)!important;border:1px solid var(--bdr)!important;box-shadow:0 30px 80px rgba(0,0,0,.6)!important;border-radius:0!important}
+.flatpickr-day{color:var(--txt)!important;border-radius:0!important}
+.flatpickr-day.selected{background:var(--gold)!important;border-color:var(--gold)!important;color:#000!important}
+.flatpickr-day:hover:not(.selected){background:var(--goldf)!important}
+.flatpickr-months,.flatpickr-weekdays,.flatpickr-month{background:var(--bg3)!important}
+.flatpickr-current-month,.flatpickr-weekday,.cur-month{color:var(--gold)!important}
+.numInput{color:var(--gold)!important;background:transparent!important}
+.flatpickr-prev-month svg,.flatpickr-next-month svg{fill:var(--gold)!important}
+.flatpickr-day.flatpickr-disabled{color:var(--txt3)!important}
+
+/* ABOUT */
+#about{background:var(--bg2)}
+.about-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:88px;align-items:center}
+.about-vis{position:relative;height:560px}
+.av-main{position:absolute;width:72%;right:0;top:0;height:72%;background:linear-gradient(135deg,var(--wine2),var(--bg3));display:flex;align-items:center;justify-content:center;overflow:hidden}
+.av-acc{position:absolute;width:52%;left:0;bottom:0;height:52%;background:linear-gradient(135deg,var(--bg3),var(--wine2));border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center}
+.gold-corner{position:absolute;bottom:-16px;right:-16px;width:86px;height:86px;border-right:2px solid var(--gold);border-bottom:2px solid var(--gold)}
+.timeline{margin-top:48px}
+.tl-item{display:grid;grid-template-columns:70px 1fr;gap:22px;margin-bottom:28px;position:relative}
+.tl-item::before{content:'';position:absolute;left:33px;top:20px;bottom:-28px;width:1px;background:var(--bdr)}
+.tl-item:last-child::before{display:none}
+.tl-yr{font-family:var(--fd);font-size:.8rem;letter-spacing:.1em;color:var(--gold);padding-top:2px;text-align:right}
+.tl-dot{position:absolute;left:26px;top:4px;width:14px;height:14px;border-radius:50%;border:2px solid var(--gold);background:var(--bg2)}
+.tl-b{padding-left:26px}
+.tl-b h4{font-family:var(--fd);font-size:.85rem;letter-spacing:.1em;color:var(--txt);margin-bottom:4px}
+.tl-b p{font-family:var(--fs);font-size:.92rem;color:var(--txt2);line-height:1.7}
+
+/* SHOP */
+#shop{background:var(--bg)}
+.shop-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:42px;flex-wrap:wrap;gap:18px}
+.shop-filters{display:flex;gap:8px;flex-wrap:wrap}
+.shop-filters select{padding:9px 34px 9px 13px;background:var(--glass2);border:1px solid var(--bdr);color:var(--txt2);font-family:var(--fu);font-size:.7rem;letter-spacing:.07em;outline:none;-webkit-appearance:none;appearance:none;min-width:145px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c9a84c'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(226px,1fr));gap:20px}
+.shop-card{background:var(--bg3);border:1px solid transparent;transition:all .35s;overflow:hidden}
+.shop-card:hover{border-color:var(--bdr);box-shadow:0 0 38px rgba(201,168,76,.1)}
+.sc-img{height:252px;background:var(--bg2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.sc-badge{position:absolute;top:13px;left:13px;font-family:var(--fu);font-size:.57rem;letter-spacing:.13em;text-transform:uppercase;padding:4px 9px}
+.sc-badge.sale{background:var(--wine);color:var(--cream)}
+.sc-badge.new{background:var(--gold);color:#000}
+.sc-body{padding:16px}
+.sc-name{font-family:var(--fd);font-size:.86rem;letter-spacing:.1em;color:var(--txt);margin-bottom:4px}
+.sc-region{font-family:var(--fu);font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--txt3);margin-bottom:11px}
+.sc-foot{display:flex;align-items:center;justify-content:space-between}
+.sc-price{font-family:var(--fs);font-size:1.12rem;color:var(--gold)}
+.btn-add{width:34px;height:34px;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:1.05rem;transition:all .3s}
+.btn-add:hover{background:var(--gold);color:#000;border-color:var(--gold)}
+
+/* CONTACT */
+#contact{background:var(--bg2)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:66px}
+.cf-wrap{background:var(--glass2);border:1px solid var(--bdr);padding:42px;position:relative}
+.cf-wrap::before{content:'';position:absolute;top:0;left:34px;right:34px;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent)}
+.btn-send{width:100%;padding:15px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:var(--fd);font-size:.7rem;letter-spacing:.26em;text-transform:uppercase;transition:all .3s;margin-top:8px}
+.btn-send:hover{background:var(--gold);color:#000}
+.ci-title{font-family:var(--fd);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.ci-item{display:flex;gap:15px;margin-bottom:24px;align-items:flex-start}
+.ci-icon{width:42px;height:42px;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--gold);font-size:.9rem}
+.ci-item h4{font-family:var(--fu);font-size:.62rem;letter-spacing:.17em;text-transform:uppercase;color:var(--txt3);margin-bottom:4px}
+.ci-item p{font-family:var(--fs);font-size:.96rem;color:var(--txt);line-height:1.6}
+.map-box{width:100%;height:205px;background:var(--bg3);border:1px solid var(--bdr);margin-top:24px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.map-grid{position:absolute;inset:0;opacity:.12;background-image:linear-gradient(var(--gold) 1px,transparent 1px),linear-gradient(90deg,var(--gold) 1px,transparent 1px);background-size:26px 26px}
+.map-pin{width:13px;height:13px;border-radius:50% 50% 50% 0;background:var(--gold);transform:rotate(-45deg);box-shadow:0 0 0 5px rgba(201,168,76,.18),0 0 22px rgba(201,168,76,.35);position:relative;z-index:1}
+.socials{display:flex;gap:9px;margin-top:24px}
+.soc{width:40px;height:40px;border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:.73rem;font-family:var(--fu);transition:all .3s}
+.soc:hover{background:var(--gold);color:#000;border-color:var(--gold)}
+
+/* NEWSLETTER */
+#newsletter{background:var(--wine2);position:relative;overflow:hidden}
+#newsletter::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 50%,rgba(201,168,76,.06) 0%,transparent 70%);pointer-events:none}
+.nl-inner{max-width:660px;margin:0 auto;text-align:center;position:relative;z-index:1}
+.nl-title{font-family:var(--fd);font-size:clamp(1.65rem,3vw,2.5rem);letter-spacing:.08em;color:var(--cream);margin-bottom:11px}
+.nl-sub{font-family:var(--fs);font-size:1.05rem;font-weight:300;color:rgba(232,221,208,.52);margin-bottom:38px;line-height:1.8}
+.nl-form{display:flex;max-width:450px;margin:0 auto}
+.nl-form input{flex:1;padding:14px 17px;background:rgba(255,255,255,.08);border:1px solid rgba(201,168,76,.3);border-right:none;color:var(--cream);font-size:.85rem;outline:none;transition:border-color .3s}
+.nl-form input::placeholder{color:rgba(232,221,208,.3)}
+.nl-form input:focus{border-color:var(--gold)}
+.nl-form button{padding:14px 24px;background:var(--gold);color:#000;font-family:var(--fd);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600;transition:all .3s}
+.nl-form button:hover{background:var(--gold2)}
+
+/* FOOTER */
+footer{background:#050402;padding:68px 60px 34px;border-top:1px solid var(--bdr)}
+.ft-top{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.ft-logo{font-family:var(--fd);font-size:1.45rem;letter-spacing:.35em;color:var(--gold);display:block;margin-bottom:16px}
+.ft-brand p{font-family:var(--fs);font-size:.91rem;line-height:1.8;color:var(--txt2);max-width:265px}
+.ft-col h4{font-family:var(--fd);font-size:.67rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:17px}
+.ft-col ul{list-style:none}
+.ft-col li{font-family:var(--fu);font-size:.76rem;letter-spacing:.05em;color:var(--txt2);margin-bottom:8px;cursor:default;transition:color .3s}
+.ft-col li:hover{color:var(--txt)}
+.ft-bot{display:flex;align-items:center;justify-content:space-between;padding-top:24px;border-top:1px solid var(--bdr);flex-wrap:wrap;gap:13px}
+.ft-bot p{font-family:var(--fu);font-size:.67rem;letter-spacing:.07em;color:var(--txt3)}
+.ft-links{display:flex;gap:20px}
+.ft-links a{font-family:var(--fu);font-size:.66rem;letter-spacing:.06em;color:var(--txt3);transition:color .3s}
+.ft-links a:hover{color:var(--gold)}
+
+/* TOAST */
+#toast{position:fixed;bottom:26px;right:26px;z-index:99999;padding:14px 20px;background:var(--bg3);border:1px solid var(--bdr);border-left:3px solid var(--gold);font-family:var(--fu);font-size:.77rem;letter-spacing:.06em;color:var(--txt);max-width:295px;transform:translateX(130%);transition:transform .4s var(--ease);pointer-events:none}
+#toast.show{transform:translateX(0)}
+
+/* CART DRAWER */
+#cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9580;opacity:0;pointer-events:none;transition:opacity .4s}
+#cart-overlay.show{opacity:1;pointer-events:all}
+#cart-drawer{position:fixed;top:0;right:0;bottom:0;width:360px;background:var(--bg3);border-left:1px solid var(--bdr);z-index:9590;transform:translateX(100%);transition:transform .45s var(--ease);display:flex;flex-direction:column}
+#cart-drawer.open{transform:translateX(0)}
+.cart-hd{padding:24px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.cart-hd h3{font-family:var(--fd);font-size:.86rem;letter-spacing:.17em;text-transform:uppercase;color:var(--txt)}
+.btn-x{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid var(--bdr);color:var(--txt2);font-size:.88rem;transition:all .3s}
+.btn-x:hover{border-color:var(--gold);color:var(--gold)}
+.cart-body{flex:1;overflow-y:auto;padding:20px}
+.cart-empty{text-align:center;padding:48px 14px;color:var(--txt2);font-family:var(--fs);font-size:1.02rem;line-height:1.7}
+.cart-item{display:flex;gap:13px;margin-bottom:17px;padding-bottom:17px;border-bottom:1px solid var(--bdr)}
+.ci-thumb{width:54px;height:68px;background:var(--bg2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ci-info{flex:1}
+.ci-name{font-family:var(--fd);font-size:.76rem;letter-spacing:.1em;color:var(--txt);margin-bottom:4px}
+.ci-price{font-family:var(--fs);font-size:.96rem;color:var(--gold)}
+.ci-rm{font-family:var(--fu);font-size:.64rem;letter-spacing:.09em;color:var(--txt3);margin-top:3px;display:inline-block;transition:color .3s}
+.ci-rm:hover{color:var(--wine3)}
+.cart-ft{padding:17px 20px;border-top:1px solid var(--bdr)}
+.cart-tot{display:flex;justify-content:space-between;margin-bottom:13px;font-family:var(--fd);font-size:.77rem;letter-spacing:.1em;color:var(--txt)}
+.cart-tot span:last-child{color:var(--gold);font-size:1.02rem}
+.btn-checkout{width:100%;padding:14px;background:var(--gold);color:#000;font-family:var(--fd);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;transition:all .3s}
+.btn-checkout:hover{background:var(--gold2)}
+
+/* LOGIN MODAL */
+#login-modal{position:fixed;inset:0;z-index:9600;display:flex;align-items:center;justify-content:center;background:rgba(10,8,6,.92);backdrop-filter:blur(22px);opacity:0;pointer-events:none;transition:opacity .4s}
+#login-modal.open{opacity:1;pointer-events:all}
+.modal-box{width:100%;max-width:430px;padding:50px 42px;background:var(--bg3);border:1px solid var(--bdr);position:relative}
+.modal-box::before{content:'';position:absolute;top:0;left:38px;right:38px;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent)}
+.modal-logo{font-family:var(--fd);font-size:1.35rem;letter-spacing:.3em;color:var(--gold);text-align:center;margin-bottom:6px}
+.modal-div{width:48px;height:1px;background:var(--gold);opacity:.42;margin:13px auto 24px}
+.modal-tabs{display:flex;border-bottom:1px solid var(--bdr);margin-bottom:26px}
+.mtab{flex:1;padding:11px;text-align:center;font-family:var(--fu);font-size:.65rem;letter-spacing:.17em;text-transform:uppercase;color:var(--txt2);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .3s}
+.mtab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.mpanel{display:none}
+.mpanel.on{display:block}
+.forgot{font-family:var(--fu);font-size:.64rem;color:var(--txt3);display:block;text-align:right;margin:-7px 0 17px;transition:color .3s}
+.forgot:hover{color:var(--gold)}
+.btn-modal{width:100%;padding:14px;background:var(--gold);color:#000;font-family:var(--fd);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;transition:all .3s}
+.btn-modal:hover{background:var(--gold2)}
+.modal-sw{text-align:center;margin-top:16px;font-family:var(--fu);font-size:.68rem;color:var(--txt3)}
+.modal-sw a{color:var(--gold)}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .nav-links{display:none}
+  .ham{display:flex}
+  .story-grid{grid-template-columns:1fr}
+  .story-vis{min-height:340px}
+  .bk-grid{grid-template-columns:1fr}
+  .about-grid{grid-template-columns:1fr}
+  .about-vis{height:340px;margin-bottom:36px}
+  .contact-grid{grid-template-columns:1fr}
+  .ft-top{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .pad{padding:68px 22px}
+  #nav,#nav.scrolled{padding:17px 22px}
+  .hero-h1{font-size:2rem}
+  .story-body{padding:48px 24px}
+  .stats-row{grid-template-columns:1fr;gap:16px}
+  .form-row{grid-template-columns:1fr}
+  .bk-form{padding:28px 22px}
+  .ft-top{grid-template-columns:1fr;gap:30px}
+  .ft-bot{flex-direction:column;text-align:center}
+  #cart-drawer{width:100%}
+  .nl-form{flex-direction:column}
+  .nl-form input{border-right:1px solid rgba(201,168,76,.3);border-bottom:none}
+  .wines-head{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+<div id="prog"></div>
+
+<!-- NAVBAR -->
+<nav id="nav">
+  <a href="#hero" class="nav-logo">VELORIA</a>
+  <ul class="nav-links">
+    <li><a href="#wines">Collection</a></li>
+    <li><a href="#story">Story</a></li>
+    <li><a href="#booking">Reserve</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#shop">Shop</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-icon" id="theme-btn" title="Toggle theme">☀</button>
+    <button class="btn-icon" id="cart-btn" title="Cart">🛒<span id="cart-count"></span></button>
+    <button class="btn-nav" id="login-btn">Account</button>
+    <button class="ham" id="ham"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div id="mob-menu">
+  <ul class="mob-links">
+    <li><a href="#wines"   class="mlink">Collection</a></li>
+    <li><a href="#story"   class="mlink">Story</a></li>
+    <li><a href="#booking" class="mlink">Reserve</a></li>
+    <li><a href="#about"   class="mlink">About</a></li>
+    <li><a href="#shop"    class="mlink">Shop</a></li>
+    <li><a href="#contact" class="mlink">Contact</a></li>
+  </ul>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <svg class="hero-btl" viewBox="0 0 100 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M38 20L38 58Q22 76 17 115L17 262Q17 282 50 282Q83 282 83 262L83 115Q78 76 62 58L62 20Z" stroke="rgba(201,168,76,.45)" stroke-width="1.5" fill="rgba(122,37,53,.18)"/>
+    <rect x="36" y="12" width="28" height="10" rx="2" fill="#110d0a" stroke="rgba(201,168,76,.35)" stroke-width=".9"/>
+    <rect x="33" y="8" width="34" height="6" rx="1" fill="#0f0a04" stroke="rgba(201,168,76,.25)" stroke-width=".9"/>
+    <rect x="24" y="130" width="52" height="68" rx="1" fill="rgba(201,168,76,.06)" stroke="rgba(201,168,76,.22)" stroke-width=".8"/>
+    <line x1="28" y1="148" x2="72" y2="148" stroke="rgba(201,168,76,.3)" stroke-width=".6"/>
+    <line x1="28" y1="182" x2="72" y2="182" stroke="rgba(201,168,76,.3)" stroke-width=".6"/>
+  </svg>
+  <div class="hero-content">
+    <span class="hero-ey">Est. 1892 · Valle de Veloria · Spain</span>
+    <h1 class="hero-h1">Crafted for <em>Taste.</em><br>Designed for Experience.</h1>
+    <p class="hero-sub">Discover the finest wines curated for true connoisseurs.<br>Where terroir meets artistry in every pour.</p>
+    <a href="#wines" class="btn-hero">
+      <span>Explore Collection</span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <p class="scroll-txt">Scroll</p>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="mq-wrap" aria-hidden="true"><div class="mq-track" id="mtrack"></div></div>
+
+<!-- FEATURED WINES -->
+<section id="wines" class="pad">
+  <div class="wines-head">
+    <div>
+      <span class="ey">Our Collection</span>
+      <h2 class="stitle">Exceptional<br>Vintages</h2>
+    </div>
+    <div class="filter-row">
+      <button class="fbtn on" data-f="all">All</button>
+      <button class="fbtn" data-f="red">Red</button>
+      <button class="fbtn" data-f="white">White</button>
+      <button class="fbtn" data-f="sparkling">Sparkling</button>
+      <button class="fbtn" data-f="reserve">Reserve</button>
+    </div>
+  </div>
+  <div class="wines-grid" id="wines-grid"></div>
+</section>
+
+<!-- STORY -->
+<section id="story">
+  <div class="story-grid">
+    <div class="story-vis">
+      <div class="s-vis-grad"></div>
+      <svg style="position:absolute;inset:0;opacity:.14;width:100%;height:100%" viewBox="0 0 500 400" fill="none" preserveAspectRatio="xMidYMid slice">
+        <path d="M0 350Q100 200 200 280Q300 350 400 180Q450 100 500 200L500 400L0 400Z" fill="rgba(201,168,76,.5)"/>
+        <circle cx="150" cy="220" r="40" fill="rgba(201,168,76,.35)"/>
+        <circle cx="300" cy="160" r="55" fill="rgba(201,168,76,.25)"/>
+        <line x1="100" y1="350" x2="100" y2="258" stroke="rgba(201,168,76,.6)" stroke-width="1.8"/>
+        <line x1="200" y1="350" x2="200" y2="258" stroke="rgba(201,168,76,.6)" stroke-width="1.8"/>
+        <line x1="300" y1="350" x2="300" y2="258" stroke="rgba(201,168,76,.6)" stroke-width="1.8"/>
+        <line x1="400" y1="350" x2="400" y2="258" stroke="rgba(201,168,76,.6)" stroke-width="1.8"/>
+        <line x1="50" y1="294" x2="450" y2="294" stroke="rgba(201,168,76,.25)" stroke-width="1"/>
+        <line x1="50" y1="316" x2="450" y2="316" stroke="rgba(201,168,76,.25)" stroke-width="1"/>
+      </svg>
+      <div class="vis-foot">
+        <div class="big-yr">1892</div>
+        <p class="vis-reg">Valle de Veloria</p>
+        <p class="vis-sub2">Ribera del Duero · Spain</p>
+      </div>
+    </div>
+    <div class="story-body">
+      <span class="ey">Our Heritage</span>
+      <h2 class="stitle">A Legacy Poured<br>in Every Bottle</h2>
+      <div class="gline"></div>
+      <p class="story-q">Wine is the only artwork you can drink.</p>
+      <p>For over a century, the Veloria family has cultivated the rich terroir of the Duero Valley. Each vine tells a story of patience, passion, and unwavering dedication to the craft of winemaking.</p>
+      <p>Our vineyards, planted at elevations above 900 metres, produce grapes of extraordinary concentration. The extreme continental climate forces the vines to dig deep, creating wines of remarkable complexity.</p>
+      <div class="stats-row">
+        <div><span class="stat-n" data-count="130">130+</span><span class="stat-l">Years of Heritage</span></div>
+        <div><span class="stat-n" data-count="280">280+</span><span class="stat-l">Hectares of Vineyard</span></div>
+        <div><span class="stat-n" data-count="48">48+</span><span class="stat-l">International Awards</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section id="booking" class="pad">
+  <div class="bk-grid">
+    <div>
+      <span class="ey">Private Experiences</span>
+      <h2 class="stitle">Reserve Your<br>Tasting</h2>
+      <div class="gline"></div>
+      <p class="ssub" style="margin-bottom:42px">Immerse yourself in the world of Veloria. Our curated experiences are designed for those who seek the extraordinary.</p>
+      <h3 style="font-family:var(--fd);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">Available Experiences</h3>
+      <div class="exp-card"><div class="exp-t">The Heritage Flight</div><div class="exp-d">A guided journey through four decades of our finest Reservas, led by our master sommelier.</div><div class="exp-p">€95 per person</div></div>
+      <div class="exp-card"><div class="exp-t">Vineyard Sunset Dinner</div><div class="exp-d">Dine among the vines as the sun sets over the Duero Valley, with wine pairings for each course.</div><div class="exp-p">€220 per person</div></div>
+      <div class="exp-card"><div class="exp-t">Barrel Room Exclusive</div><div class="exp-d">Private access to our barrel room with the head winemaker. Groups of 6–12 guests.</div><div class="exp-p">From €1,800</div></div>
+    </div>
+    <div class="bk-form">
+      <p style="font-family:var(--fd);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:5px">Make a Reservation</p>
+      <p style="font-family:var(--fs);font-size:.92rem;color:var(--txt2);margin-bottom:24px">Select your experience and preferred time</p>
+      <div class="form-row">
+        <div class="fg"><label>First Name</label><input type="text" placeholder="Elena"></div>
+        <div class="fg"><label>Last Name</label><input type="text" placeholder="Martínez"></div>
+      </div>
+      <div class="fg"><label>Email Address</label><input type="email" placeholder="elena@example.com"></div>
+      <div class="form-row">
+        <div class="fg"><label>Select Date</label><input type="text" id="bk-date" placeholder="Choose a date" readonly></div>
+        <div class="fg"><label>Guests</label><select><option>1 Guest</option><option>2 Guests</option><option>3 Guests</option><option>4 Guests</option><option>5–8 Guests</option><option>9+ Guests</option></select></div>
+      </div>
+      <div class="fg"><label>Experience</label><select><option>The Heritage Flight — €95 pp</option><option>Vineyard Sunset Dinner — €220 pp</option><option>Barrel Room Exclusive — From €1,800</option></select></div>
+      <div class="fg">
+        <label>Preferred Time</label>
+        <div class="time-grid">
+          <button class="tslot" onclick="pickTime(this)">11:00 AM</button>
+          <button class="tslot on" onclick="pickTime(this)">1:00 PM</button>
+          <button class="tslot" onclick="pickTime(this)">3:00 PM</button>
+          <button class="tslot" onclick="pickTime(this)">5:00 PM</button>
+          <button class="tslot" onclick="pickTime(this)">6:30 PM</button>
+          <button class="tslot" onclick="pickTime(this)">8:00 PM</button>
+        </div>
+      </div>
+      <div class="fg"><label>Special Requests</label><textarea placeholder="Dietary restrictions, celebrations, special arrangements..."></textarea></div>
+      <div class="sbox" id="bk-ok">
+        <div class="sbox-ico">✓</div>
+        <p style="font-family:var(--fd);letter-spacing:.1em;color:var(--gold);margin-bottom:7px">Reservation Confirmed</p>
+        <p style="font-family:var(--fs);color:var(--txt2)">A confirmation has been sent to your email. We look forward to welcoming you.</p>
+      </div>
+      <button class="btn-book" id="bk-btn"><span>Confirm Reservation</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="pad">
+  <div class="about-grid">
+    <div class="about-vis">
+      <div class="av-main">
+        <svg viewBox="0 0 200 260" width="88" opacity="0.55" fill="none">
+          <circle cx="100" cy="56" r="32" stroke="rgba(201,168,76,.6)" stroke-width="1.5"/>
+          <path d="M55 105Q55 88 100 88Q145 88 145 105L160 240L40 240Z" stroke="rgba(201,168,76,.4)" stroke-width="1.5" fill="rgba(122,37,53,.12)"/>
+          <path d="M55 145L32 210" stroke="rgba(201,168,76,.4)" stroke-width="1.5"/>
+          <path d="M145 145L168 210" stroke="rgba(201,168,76,.4)" stroke-width="1.5"/>
+          <circle cx="172" cy="196" r="15" stroke="rgba(201,168,76,.5)" stroke-width="1"/>
+          <path d="M164 211L164 228M180 211L180 228M159 228L185 228" stroke="rgba(201,168,76,.5)" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="av-acc">
+        <svg viewBox="0 0 180 130" width="108" opacity="0.7" fill="none">
+          <ellipse cx="50" cy="65" rx="44" ry="30" stroke="rgba(201,168,76,.5)" stroke-width="1.5"/>
+          <rect x="8" y="36" width="84" height="58" stroke="rgba(201,168,76,.3)" stroke-width="1"/>
+          <line x1="8" y1="65" x2="92" y2="65" stroke="rgba(201,168,76,.4)" stroke-width="1"/>
+          <ellipse cx="128" cy="70" rx="44" ry="30" stroke="rgba(201,168,76,.4)" stroke-width="1.5"/>
+          <rect x="86" y="41" width="84" height="58" stroke="rgba(201,168,76,.2)" stroke-width="1"/>
+          <line x1="86" y1="70" x2="170" y2="70" stroke="rgba(201,168,76,.3)" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="gold-corner"></div>
+    </div>
+    <div>
+      <span class="ey">Our Story</span>
+      <h2 class="stitle">Where Legacy<br>Meets Craft</h2>
+      <div class="gline"></div>
+      <p style="font-family:var(--fs);font-size:1rem;font-weight:300;line-height:2;color:var(--txt2);margin-bottom:13px">Founded by Don Alejandro Veloria in 1892, our estate has been the custodian of some of Spain's most celebrated vineyards for five generations.</p>
+      <p style="font-family:var(--fs);font-size:1rem;font-weight:300;line-height:2;color:var(--txt2);margin-bottom:36px">Today, under the stewardship of Elena Veloria, we blend ancestral wisdom with modern precision — honouring the past while crafting wines for the future.</p>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-yr">1892</div><div style="position:relative"><div class="tl-dot"></div><div class="tl-b"><h4>The Founding</h4><p>Don Alejandro plants the first Tempranillo vines on the slopes of Sierra de Gredos.</p></div></div></div>
+        <div class="tl-item"><div class="tl-yr">1948</div><div style="position:relative"><div class="tl-dot"></div><div class="tl-b"><h4>The First Reserva</h4><p>Carlos Veloria produces the estate's first Reserva, aged 24 months in French oak.</p></div></div></div>
+        <div class="tl-item"><div class="tl-yr">1987</div><div style="position:relative"><div class="tl-dot"></div><div class="tl-b"><h4>International Recognition</h4><p>Veloria Gran Reserva earns 98 points from Wine Spectator, putting Spain on the world stage.</p></div></div></div>
+        <div class="tl-item"><div class="tl-yr">2019</div><div style="position:relative"><div class="tl-dot"></div><div class="tl-b"><h4>A New Chapter</h4><p>Elena Veloria introduces organic farming and carbon-neutral production across all vineyards.</p></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOP -->
+<section id="shop" class="pad">
+  <div class="shop-head">
+    <div>
+      <span class="ey">Online Boutique</span>
+      <h2 class="stitle">Shop the Collection</h2>
+    </div>
+    <div class="shop-filters">
+      <select id="sf-type"><option value="">All Wines</option><option value="red">Red</option><option value="white">White</option><option value="sparkling">Sparkling</option></select>
+      <select id="sf-region"><option value="">All Regions</option><option value="Ribera del Duero">Ribera del Duero</option><option value="Rioja Alta">Rioja</option><option value="Priorat">Priorat</option></select>
+      <select id="sf-price"><option value="">Any Price</option><option value="low">Under €50</option><option value="mid">€50–€100</option><option value="high">Over €100</option></select>
+    </div>
+  </div>
+  <div class="shop-grid" id="shop-grid"></div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="pad">
+  <div style="margin-bottom:56px">
+    <span class="ey">Get in Touch</span>
+    <h2 class="stitle">We'd Love to Hear From You</h2>
+  </div>
+  <div class="contact-grid">
+    <div class="cf-wrap">
+      <div class="form-row">
+        <div class="fg"><label>Name</label><input type="text" placeholder="Your full name"></div>
+        <div class="fg"><label>Email</label><input type="email" placeholder="your@email.com"></div>
+      </div>
+      <div class="fg"><label>Subject</label><input type="text" placeholder="How can we help?"></div>
+      <div class="fg"><label>Message</label><textarea style="height:125px" placeholder="Tell us more..."></textarea></div>
+      <button class="btn-send" onclick="toast('Message sent. We\'ll respond within 24 hours.')">Send Message</button>
+    </div>
+    <div>
+      <h3 class="ci-title">Contact Information</h3>
+      <div class="ci-item"><div class="ci-icon">📍</div><div><h4>Location</h4><p>Finca Veloria, Camino del Duero 42<br>09400 Aranda de Duero, Spain</p></div></div>
+      <div class="ci-item"><div class="ci-icon">✉</div><div><h4>Email</h4><p>visitas@veloriawines.es<br>trade@veloriawines.es</p></div></div>
+      <div class="ci-item"><div class="ci-icon">📞</div><div><h4>Phone</h4><p>+34 947 500 100<br>Mon–Sat, 9:00–18:00 CET</p></div></div>
+      <div class="map-box"><div class="map-grid"></div><div style="position:relative;z-index:1;text-align:center"><div class="map-pin" style="margin:0 auto 9px"></div><p style="font-family:var(--fd);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)">Finca Veloria</p><p style="font-family:var(--fu);font-size:.65rem;color:var(--txt3);margin-top:3px">41.6765° N · 3.6925° W</p></div></div>
+      <div class="socials"><a href="#" class="soc">IG</a><a href="#" class="soc">FB</a><a href="#" class="soc">𝕏</a><a href="#" class="soc">PT</a><a href="#" class="soc">YT</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section id="newsletter" class="pad">
+  <div class="nl-inner">
+    <span class="ey" style="color:rgba(201,168,76,.68)">Stay Connected</span>
+    <h2 class="nl-title">Exclusive Access.<br>Rare Releases.</h2>
+    <p class="nl-sub">Join the Veloria inner circle and be the first to discover limited editions, private tastings, and cellar exclusives.</p>
+    <div class="nl-form">
+      <input type="email" id="nl-email" placeholder="Your email address">
+      <button onclick="nlSub()">Subscribe</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-top">
+    <div class="ft-brand">
+      <span class="ft-logo">VELORIA</span>
+      <p>Crafting exceptional wines in the heart of the Duero Valley since 1892. Every bottle is a chapter in our story.</p>
+      <div class="socials" style="margin-top:20px"><a href="#" class="soc">IG</a><a href="#" class="soc">FB</a><a href="#" class="soc">𝕏</a></div>
+    </div>
+    <div class="ft-col"><h4>Collection</h4><ul><li>Tempranillo Reserva</li><li>Gran Reserva</li><li>White Wines</li><li>Sparkling Cava</li><li>Limited Editions</li></ul></div>
+    <div class="ft-col"><h4>Experiences</h4><ul><li>Heritage Flight</li><li>Vineyard Dinners</li><li>Barrel Room Tours</li><li>Masterclasses</li><li>Corporate Events</li></ul></div>
+    <div class="ft-col"><h4>Company</h4><ul><li>Our Story</li><li>Sustainability</li><li>Press</li><li>Trade Partners</li><li>Careers</li></ul></div>
+  </div>
+  <div class="ft-bot">
+    <p>© 2024 Veloria Wines. All rights reserved. Please drink responsibly.</p>
+    <div class="ft-links"><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="#">Shipping</a></div>
+  </div>
+</footer>
+
+<!-- LOGIN MODAL -->
+<div id="login-modal">
+  <div class="modal-box">
+    <button class="btn-x" id="modal-close" style="position:absolute;top:17px;right:17px">✕</button>
+    <div class="modal-logo">VELORIA</div>
+    <div class="modal-div"></div>
+    <div class="modal-tabs">
+      <button class="mtab on" onclick="mTab('login')">Sign In</button>
+      <button class="mtab" onclick="mTab('signup')">Create Account</button>
+    </div>
+    <div class="mpanel on" id="p-login">
+      <div class="fg"><label>Email</label><input type="email" placeholder="your@email.com"></div>
+      <div class="fg"><label>Password</label><input type="password" placeholder="••••••••"></div>
+      <a href="#" class="forgot">Forgot your password?</a>
+      <button class="btn-modal" onclick="toast('Welcome back to Veloria.')">Sign In</button>
+      <p class="modal-sw">New to Veloria? <a href="#" onclick="mTab('signup')">Create an account</a></p>
+    </div>
+    <div class="mpanel" id="p-signup">
+      <div class="form-row">
+        <div class="fg"><label>First Name</label><input type="text" placeholder="Elena"></div>
+        <div class="fg"><label>Last Name</label><input type="text" placeholder="Martínez"></div>
+      </div>
+      <div class="fg"><label>Email</label><input type="email" placeholder="your@email.com"></div>
+      <div class="fg"><label>Password</label><input type="password" placeholder="Min. 8 characters"></div>
+      <button class="btn-modal" onclick="toast('Welcome to the Veloria family.')">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- CART DRAWER -->
+<div id="cart-overlay" onclick="closeCart()"></div>
+<div id="cart-drawer">
+  <div class="cart-hd"><h3>Your Selection</h3><button class="btn-x" onclick="closeCart()">✕</button></div>
+  <div class="cart-body" id="cart-body"><div class="cart-empty">Your cart is empty.<br>Discover our collection.</div></div>
+  <div class="cart-ft" id="cart-ft" style="display:none">
+    <div class="cart-tot"><span>Total</span><span id="cart-tot-val">€0</span></div>
+    <button class="btn-checkout" onclick="toast('Proceeding to secure checkout...')">Proceed to Checkout</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ── Register GSAP immediately ── */
+gsap.registerPlugin(ScrollTrigger);
+
+/* ── Data ── */
+const WINES=[
+  {id:1,name:'Gran Reserva 2018',    region:'Ribera del Duero',type:'red',      price:148,stars:5,badge:'',    vintage:'2018'},
+  {id:2,name:'Albariño Atlántico',   region:'Rías Baixas',     type:'white',    price:42, stars:4,badge:'new', vintage:'2022'},
+  {id:3,name:'Tempranillo Clásico',  region:'Rioja Alta',      type:'red',      price:65, stars:5,badge:'',    vintage:'2020'},
+  {id:4,name:'Cava Brut Nature',     region:'Penedès',         type:'sparkling',price:38, stars:4,badge:'new', vintage:'NV'},
+  {id:5,name:'Mencía Singular',      region:'Bierzo',          type:'red',      price:58, stars:5,badge:'',    vintage:'2021'},
+  {id:6,name:'Verdejo Velorio',      region:'Rueda',           type:'white',    price:34, stars:4,badge:'',    vintage:'2023'},
+  {id:7,name:'Priorat Noir',         region:'Priorat',         type:'red',      price:195,stars:5,badge:'',    vintage:'2017'},
+  {id:8,name:'Godello Barrica',      region:'Valdeorras',      type:'white',    price:55, stars:4,badge:'',    vintage:'2021'},
+];
+const FILLS={red:'#5a1e2a',white:'#243620',sparkling:'#1e2a3a'};
+
+function bottleSVG(type,idx,small){
+  const w=small?54:76,c=FILLS[type]||'#2a2a2a';
+  return `<svg viewBox="0 0 80 220" width="${w}" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M32 18L32 48Q18 64 14 100L14 188Q14 204 40 204Q66 204 66 188L66 100Q62 64 48 48L48 18Z" fill="${c}" stroke="rgba(201,168,76,.38)" stroke-width="1.2"/>
+    <path d="M32 18L32 48Q18 64 14 100L14 136Q40 148 66 136L66 100Q62 64 48 48L48 18Z" fill="rgba(255,255,255,.04)"/>
+    <rect x="30" y="11" width="20" height="9" rx="1.5" fill="#110d0a" stroke="rgba(201,168,76,.3)" stroke-width=".8"/>
+    <rect x="27" y="7" width="26" height="6" rx="1" fill="#0f0a04" stroke="rgba(201,168,76,.22)" stroke-width=".8"/>
+    <rect x="20" y="98" width="40" height="52" rx="1" fill="rgba(201,168,76,.07)" stroke="rgba(201,168,76,.25)" stroke-width=".8"/>
+    <line x1="23" y1="112" x2="57" y2="112" stroke="rgba(201,168,76,.28)" stroke-width=".5"/>
+    <line x1="23" y1="138" x2="57" y2="138" stroke="rgba(201,168,76,.28)" stroke-width=".5"/>
+    <text x="40" y="128" text-anchor="middle" font-size="6" fill="rgba(201,168,76,.65)" font-family="serif">${idx+1}</text>
+    <ellipse cx="40" cy="194" rx="22" ry="5.5" fill="rgba(0,0,0,.28)"/>
+  </svg>`;
+}
+
+function starsHTML(n){
+  return Array.from({length:5},(_,i)=>`<span class="star${i>=n?' dim':''}">\u2605</span>`).join('');
+}
+
+/* ── Render wines ── */
+function renderWines(){
+  document.getElementById('wines-grid').innerHTML=WINES.map((w,i)=>`
+    <div class="wine-card" data-type="${w.type}">
+      <div class="wc-img">${bottleSVG(w.type,i)}
+        <div class="wc-ov"><div class="wc-acts">
+          <button class="btn-wc btn-wc-o" onclick="openCart()">View Details</button>
+          <button class="btn-wc btn-wc-p" onclick="addToCart(${w.id})">Add to Cart</button>
+        </div></div>
+      </div>
+      <div class="wc-info">
+        <div class="wc-stars">${starsHTML(w.stars)}</div>
+        <div class="wc-name">${w.name}</div>
+        <div class="wc-meta">${w.region} · ${w.vintage}</div>
+        <div class="wc-price">€${w.price}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── Render shop ── */
+function renderShop(){
+  document.getElementById('shop-grid').innerHTML=WINES.map((w,i)=>`
+    <div class="shop-card" data-type="${w.type}" data-region="${w.region}" data-price="${w.price}">
+      <div class="sc-img">
+        ${w.badge?`<span class="sc-badge ${w.badge}">${w.badge==='new'?'New':'Sale'}</span>`:''}
+        ${bottleSVG(w.type,i)}
+      </div>
+      <div class="sc-body">
+        <div class="sc-name">${w.name}</div>
+        <div class="sc-region">${w.region} · ${w.vintage}</div>
+        <div class="sc-foot"><span class="sc-price">€${w.price}</span>
+          <button class="btn-add" onclick="addToCart(${w.id})">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── Wine filter ── */
+document.addEventListener('click',function(e){
+  const btn=e.target.closest('.fbtn');
+  if(!btn)return;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const f=btn.dataset.f;
+  document.querySelectorAll('.wine-card').forEach(c=>{
+    const show=f==='all'||c.dataset.type===f;
+    gsap.to(c,{opacity:show?1:.12,scale:show?1:.97,duration:.35,ease:'power2.out'});
+  });
+});
+
+/* ── Shop filter ── */
+function applyShopFilters(){
+  const type=document.getElementById('sf-type').value;
+  const region=document.getElementById('sf-region').value;
+  const price=document.getElementById('sf-price').value;
+  document.querySelectorAll('#shop-grid .shop-card').forEach(c=>{
+    const p=parseFloat(c.dataset.price);
+    let show=true;
+    if(type&&c.dataset.type!==type)show=false;
+    if(region&&c.dataset.region!==region)show=false;
+    if(price==='low'&&p>=50)show=false;
+    if(price==='mid'&&(p<50||p>100))show=false;
+    if(price==='high'&&p<=100)show=false;
+    c.style.display=show?'':'none';
+  });
+}
+['sf-type','sf-region','sf-price'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('change',applyShopFilters);
+});
+
+/* ── Cart ── */
+let cart=[];
+function addToCart(id){
+  const w=WINES.find(x=>x.id===id);if(!w)return;
+  const ex=cart.find(x=>x.id===id);
+  if(ex)ex.qty++;else cart.push({...w,qty:1});
+  updateCartUI();toast(w.name+' added to your selection.');openCart();
+}
+function removeFromCart(id){cart=cart.filter(x=>x.id!==id);updateCartUI();}
+function updateCartUI(){
+  const total=cart.reduce((a,c)=>a+c.price*c.qty,0);
+  const cnt=cart.reduce((a,c)=>a+c.qty,0);
+  const el=document.getElementById('cart-count');
+  if(cnt>0){el.style.display='flex';el.textContent=cnt;}else{el.style.display='none';}
+  const body=document.getElementById('cart-body');
+  const ft=document.getElementById('cart-ft');
+  if(!cart.length){
+    body.innerHTML='<div class="cart-empty">Your cart is empty.<br>Discover our collection.</div>';
+    ft.style.display='none';
+  }else{
+    body.innerHTML=cart.map(item=>`
+      <div class="cart-item">
+        <div class="ci-thumb">${bottleSVG(item.type,item.id-1,true)}</div>
+        <div class="ci-info">
+          <div class="ci-name">${item.name}</div>
+          <div class="ci-price">€${item.price} × ${item.qty}</div>
+          <span class="ci-rm" onclick="removeFromCart(${item.id})">Remove</span>
+        </div>
+      </div>`).join('');
+    ft.style.display='block';
+    document.getElementById('cart-tot-val').textContent='€'+total.toLocaleString();
+  }
+}
+function openCart(){document.getElementById('cart-drawer').classList.add('open');document.getElementById('cart-overlay').classList.add('show');}
+function closeCart(){document.getElementById('cart-drawer').classList.remove('open');document.getElementById('cart-overlay').classList.remove('show');}
+document.getElementById('cart-btn').addEventListener('click',()=>{
+  document.getElementById('cart-drawer').classList.contains('open')?closeCart():openCart();
+});
+
+/* ── Time slots ── */
+function pickTime(el){document.querySelectorAll('.tslot').forEach(s=>s.classList.remove('on'));el.classList.add('on');}
+
+/* ── Booking ── */
+document.getElementById('bk-btn').addEventListener('click',()=>{
+  document.getElementById('bk-ok').classList.add('show');
+  document.getElementById('bk-btn').style.display='none';
+  toast('Your reservation has been confirmed!');
+});
+
+/* ── Login ── */
+document.getElementById('login-btn').addEventListener('click',()=>document.getElementById('login-modal').classList.add('open'));
+document.getElementById('modal-close').addEventListener('click',()=>document.getElementById('login-modal').classList.remove('open'));
+document.getElementById('login-modal').addEventListener('click',e=>{if(e.target===document.getElementById('login-modal'))document.getElementById('login-modal').classList.remove('open');});
+function mTab(t){
+  document.querySelectorAll('.mtab').forEach((b,i)=>b.classList.toggle('on',(t==='login'&&i===0)||(t==='signup'&&i===1)));
+  document.getElementById('p-login').classList.toggle('on',t==='login');
+  document.getElementById('p-signup').classList.toggle('on',t==='signup');
+}
+
+/* ── Theme ── */
+let dark=true;
+document.getElementById('theme-btn').addEventListener('click',()=>{
+  dark=!dark;
+  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+  document.getElementById('theme-btn').textContent=dark?'☀':'☾';
+});
+
+/* ── Hamburger ── */
+let menuOpen=false;
+function checkHam(){document.getElementById('ham').style.display=window.innerWidth<=1024?'flex':'none';}
+checkHam();window.addEventListener('resize',checkHam);
+document.getElementById('ham').addEventListener('click',()=>{menuOpen=!menuOpen;document.getElementById('mob-menu').classList.toggle('open',menuOpen);});
+document.querySelectorAll('.mlink').forEach(l=>l.addEventListener('click',()=>{menuOpen=false;document.getElementById('mob-menu').classList.remove('open');}));
+
+/* ── Toast ── */
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),3400);
+}
+
+/* ── Newsletter ── */
+function nlSub(){
+  const v=document.getElementById('nl-email').value.trim();
+  if(!v){toast('Please enter your email address.');return;}
+  toast('Welcome to the inner circle. Check your inbox.');
+  document.getElementById('nl-email').value='';
+}
+
+/* ── Marquee ── */
+const items=['Tempranillo','Garnacha','Albariño','Verdejo','Mencía','Godello','Cava Brut','Ribera del Duero','Rioja Reserva','Priorat'];
+const mt=document.getElementById('mtrack');
+const doubled=[...items,...items,...items,...items];
+mt.innerHTML=doubled.map(x=>`<span>${x}</span><span class="dot">·</span>`).join('');
+
+/* ── Cursor ── */
+const curDot=document.getElementById('cur-dot');
+const curRing=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;curDot.style.left=mx+'px';curDot.style.top=my+'px';});
+(function animRing(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;curRing.style.left=rx+'px';curRing.style.top=ry+'px';requestAnimationFrame(animRing);})();
+document.addEventListener('mouseover',e=>{
+  if(e.target.closest('a,button,.wine-card,.shop-card,.exp-card,.tslot,.soc'))
+    document.body.classList.add('hov');
+  else document.body.classList.remove('hov');
+});
+
+/* ── Render before animations ── */
+renderWines();
+renderShop();
+
+/* ── Init date picker ── */
+if(typeof flatpickr!=='undefined'){
+  flatpickr('#bk-date',{minDate:'today',dateFormat:'D, d M Y',disableMobile:true});
+}
+
+/* ═══════════════════════════════════════════════════════
+   ANIMATIONS — run on window load so DOM is ready
+════════════════════════════════════════════════════════ */
+window.addEventListener('load',function(){
+
+  /* Lenis smooth scroll — graceful fallback */
+  try{
+    const lenis=new Lenis({duration:1.25,easing:t=>Math.min(1,1.001-Math.pow(2,-10*t))});
+    function raf(t){lenis.raf(t);requestAnimationFrame(raf);}
+    requestAnimationFrame(raf);
+    lenis.on('scroll',ScrollTrigger.update);
+  }catch(e){/* native scroll fallback */}
+
+  /* Progress bar */
+  gsap.to('#prog',{width:'100%',ease:'none',scrollTrigger:{scrub:.25}});
+
+  /* Navbar */
+  window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>80),{passive:true});
+
+  /* Hero — animate FROM (elements already visible, animate in from offset) */
+  const htl=gsap.timeline({delay:.15});
+  htl.from('.hero-ey',  {y:28,opacity:0,duration:.85,ease:'power3.out'})
+     .from('.hero-h1',  {y:40,opacity:0,duration:.95,ease:'power3.out'},'-=.5')
+     .from('.hero-sub', {y:28,opacity:0,duration:.8, ease:'power3.out'},'-=.55')
+     .from('.btn-hero', {y:22,opacity:0,duration:.7, ease:'power3.out'},'-=.45')
+     .from('.scroll-hint',{opacity:0,duration:.6},'-=.2')
+     .from('.hero-btl', {x:55,opacity:0,duration:1.1,ease:'power3.out'},'<-=.8');
+
+  /* Generic scroll reveals — use gsap.from so base state is VISIBLE */
+  const selectors=[
+    '.ey','.stitle','.ssub','.gline',
+    '.story-q','.story-body p',
+    '.exp-card','.bk-form',
+    '.tl-item',
+    '.cf-wrap','.ci-item',
+    '.nl-title','.nl-sub','.nl-form',
+    '.ft-col','.ft-brand',
+  ];
+  selectors.forEach(sel=>{
+    gsap.utils.toArray(sel).forEach(el=>{
+      gsap.from(el,{y:30,opacity:0,duration:.82,ease:'power3.out',
+        scrollTrigger:{trigger:el,start:'top 92%',once:true}});
+    });
+  });
+
+  /* Wine cards */
+  gsap.from('.wine-card',{y:34,opacity:0,duration:.7,stagger:.08,ease:'power3.out',
+    scrollTrigger:{trigger:'#wines-grid',start:'top 90%',once:true}});
+
+  /* Shop cards */
+  gsap.from('.shop-card',{y:26,opacity:0,duration:.62,stagger:.07,ease:'power3.out',
+    scrollTrigger:{trigger:'#shop-grid',start:'top 90%',once:true}});
+
+  /* Stat counters */
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const target=+el.dataset.count;
+    ScrollTrigger.create({trigger:el,start:'top 85%',once:true,
+      onEnter:()=>gsap.to({v:0},{v:target,duration:2,ease:'power2.out',
+        onUpdate:function(){el.textContent=Math.round(this.targets()[0].v)+'+';}})});
+  });
+
+  /* Parallax */
+  gsap.to('.hero-btl',{yPercent:-26,ease:'none',
+    scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:1}});
+  gsap.to('.story-vis',{yPercent:-6,ease:'none',
+    scrollTrigger:{trigger:'#story',start:'top bottom',end:'bottom top',scrub:1.2}});
+  gsap.to('.av-main',{yPercent:-5,ease:'none',
+    scrollTrigger:{trigger:'#about',start:'top bottom',end:'bottom top',scrub:1.5}});
+
+  /* Magnetic buttons */
+  document.querySelectorAll('.btn-hero,.btn-book,.btn-modal,.btn-checkout,.btn-nav').forEach(btn=>{
+    btn.addEventListener('mousemove',function(e){
+      const r=this.getBoundingClientRect();
+      gsap.to(this,{x:(e.clientX-r.left-r.width/2)*.13,y:(e.clientY-r.top-r.height/2)*.13,duration:.32,ease:'power2.out'});
+    });
+    btn.addEventListener('mouseleave',function(){
+      gsap.to(this,{x:0,y:0,duration:.55,ease:'elastic.out(1,.5)'});
+    });
+  });
+
+  /* Timeline stagger */
+  gsap.from('.tl-item',{x:-24,opacity:0,duration:.7,stagger:.14,ease:'power3.out',
+    scrollTrigger:{trigger:'.timeline',start:'top 86%',once:true}});
+
+  ScrollTrigger.refresh();
+});
+</script>
+</body>
+</html>
